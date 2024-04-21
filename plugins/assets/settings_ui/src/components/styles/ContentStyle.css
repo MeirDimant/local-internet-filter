@@ -1,0 +1,10 @@
+.horizontal-list {
+  list-style-type: disc;
+  padding: 0; /* Removes default padding */
+  display: flex; /* Displays list items in a row */
+}
+
+.horizontal-list li {
+  margin-right: 26px; /* Adds space between items, adjust as needed */
+  /* Custom bullet point */
+}
