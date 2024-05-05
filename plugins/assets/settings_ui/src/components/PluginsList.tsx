@@ -80,86 +80,94 @@ const PluginsList: React.FC = () => {
   return (
     <div className="PluginsList">
       <div className="container">
-        <h2>Plugin List</h2>
+        <h1>Plugin List</h1>
         <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="request-plugins">
-            {(provided) => (
-              <div>
-                <h3>Request Plugins</h3>
-                <ul
-                  className="list"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {requestPluginsList.map((plugin, index) => (
-                    <Draggable
-                      key={plugin}
-                      draggableId={`request-${plugin}`}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          className="list-item"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <h4>{plugin}</h4>
-                          <button
-                            onClick={() => handleDeletePlugin(index, "request")}
+          <div className="droppable-container">
+            <Droppable droppableId="request-plugins">
+              {(provided) => (
+                <div>
+                  <h3>Request Plugins</h3>
+                  <ul
+                    className="list"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {requestPluginsList.map((plugin, index) => (
+                      <Draggable
+                        key={plugin}
+                        draggableId={`request-${plugin}`}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <li
+                            className="list-item"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
                           >
-                            Delete
-                          </button>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              </div>
-            )}
-          </Droppable>
-          <Droppable droppableId="response-plugins">
-            {(provided) => (
-              <div>
-                <h3>Response Plugins</h3>
-                <ul
-                  className="list"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {responsePluginsList.map((plugin, index) => (
-                    <Draggable
-                      key={plugin}
-                      draggableId={`response-${plugin}`}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          className="list-item"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <h4>{plugin}</h4>
-                          <button
-                            onClick={() =>
-                              handleDeletePlugin(index, "response")
-                            }
+                            <h4>{plugin}</h4>
+                            <button
+                              className="delete-btn"
+                              onClick={() =>
+                                handleDeletePlugin(index, "request")
+                              }
+                            >
+                              Delete
+                            </button>
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </ul>
+                </div>
+              )}
+            </Droppable>
+            <Droppable droppableId="response-plugins">
+              {(provided) => (
+                <div>
+                  <h3>Response Plugins</h3>
+                  <ul
+                    className="list"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {responsePluginsList.map((plugin, index) => (
+                      <Draggable
+                        key={plugin}
+                        draggableId={`response-${plugin}`}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <li
+                            className="list-item"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
                           >
-                            Delete
-                          </button>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              </div>
-            )}
-          </Droppable>
+                            <h4>{plugin}</h4>
+                            <button
+                              className="delete-btn"
+                              onClick={() =>
+                                handleDeletePlugin(index, "response")
+                              }
+                            >
+                              Delete
+                            </button>
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </ul>
+                </div>
+              )}
+            </Droppable>
+          </div>
         </DragDropContext>
-        <button onClick={handleSendPluginsList}>Send New Order</button>
+        <button className="add-btn" onClick={handleSendPluginsList}>
+          Send New Order
+        </button>
       </div>
     </div>
   );

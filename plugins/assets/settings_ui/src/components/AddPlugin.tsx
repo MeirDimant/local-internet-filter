@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./styles/ComponentsExtentionsClasses.css";
 
 // Define the type for the state that handles the list of plugins
 type Plugin = string; // Assuming plugin names are strings, adjust based on your actual data structure
@@ -107,18 +108,33 @@ const PluginManager: React.FC = () => {
     <div className="plugin-manager">
       <div className="container">
         <h1>Plugin Manager</h1>
-        <input type="file" onChange={handleFileUpload} disabled={uploading} />
+        <input
+          type="file"
+          className="add-input"
+          onChange={handleFileUpload}
+          disabled={uploading}
+        />
         {uploading && <p>Uploading...</p>}
         <ul className="list">
           {plugins.map((plugin, index) => (
             <li className="list-item" key={index}>
               {plugin}
-              <button onClick={() => handleDelete(plugin)}>Delete</button>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(plugin)}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
       </div>
-      <button onClick={navigateToPluginsList}>Define Plugins Order</button>
+      <button
+        className="add-btn navigate-btn-extension"
+        onClick={navigateToPluginsList}
+      >
+        Define Plugins Order
+      </button>
     </div>
   );
 };

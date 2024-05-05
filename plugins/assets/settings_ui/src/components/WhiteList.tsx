@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApprovedDomainsList from "./ApprovedDomainsList";
 import AddDomainForm from "./AddDomainForm";
-import "./styles/WhiteList.css";
+import "./styles/ComponentsExtentionsClasses.css";
 
 const WhiteList: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState<number>(0);

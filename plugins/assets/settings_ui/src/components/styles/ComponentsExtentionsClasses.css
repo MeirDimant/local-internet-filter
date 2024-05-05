@@ -1,0 +1,26 @@
+.white-list {
+  text-align: center;
+}
+
+.plugin-manager {
+  text-align: center;
+}
+
+.navigate-btn-extension {
+  border-radius: 3px !important;
+  margin: 5px !important;
+}
+
+.droppable-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.droppable-container > div {
+  flex: 1;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
