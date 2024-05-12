@@ -142,8 +142,7 @@ class FilterContent(PluginBase):
                         # If the Content-Type header matches the regex, block the response
                         # Here, you might want to log the event, clear the response, or set a custom error message.
                         # flow.set_response_body("This content type is not allowed.")
-                        flow.make_response(HTTP_BAD_REQUEST, "This content type is not allowed.", {
-                            "Content-Type": CONTENT_TYPE_TEXT})
+                        flow.kill()
                         return False  # Indicating the response has been modified and should be considered blocked
 
                     # If a matching domain is found but the content type does not match the regex, allow the response to pass

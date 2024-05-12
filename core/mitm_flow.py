@@ -6,7 +6,7 @@ class MitmFlow(IFlow):
     def __init__(self, flow_of_mitmproxy):
         self.flow_of_mitmproxy = flow_of_mitmproxy
 
-    def kill(self, status=403, txt="Domain not approved", ct="text/plain"):
+    def kill(self, status=403, txt="Unauthorized request!", ct="text/plain"):
         self.flow_of_mitmproxy.response = http.Response.make(
             status, txt, {"Content-Type": ct})
 
