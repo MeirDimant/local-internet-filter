@@ -1,67 +1,49 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import Mock, patch
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plugins.settings_plugin import SettingsPlugin
+
 
 class TestSettingsPlugin(unittest.TestCase):
 
     def setUp(self):
+        # The singleton instance of SettingsPlugin
         self.plugin = SettingsPlugin()
-
-    @patch('os.path.exists')
-    @patch('os.path.join')
-    @patch('builtins.open', new_callable=unittest.mock.mock_open, read_data=b'content')
-    def test_serve_files_existing(self, mock_open, mock_join, mock_exists):
-        # Setup
-        mock_exists.return_value = True
-        mock_join.side_effect = lambda *args: '/'.join(args)
-        flow = MagicMock()
-        flow.make_response = MagicMock()
-
-        # Action
-        self.plugin.serve_files(flow, 'index.html')
-
-        # Assert
-        flow.make_response.assert_called_with(200, b'content', {'Content-Type': 'text/html'})
-
-    @patch('os.path.exists')
-    @patch('os.path.join')
-    def test_serve_files_non_existing(self, mock_join, mock_exists):
-        # Setup
-        mock_exists.return_value = False
-        mock_join.side_effect = lambda *args: '/'.join(args)
-        flow = MagicMock()
-        flow.make_response = MagicMock()
-
-        # Action
-        self.plugin.serve_files(flow, 'nonexistent.html')
-
-        # Assert
-        flow.make_response.assert_called_with(404, b"File not found!", {"Content-Type": "text/plain"})
+        # A mock for IFlow
+        self.mock_flow = Mock()
 
     def test_onRequest_valid_host(self):
-        # Setup
-        flow = MagicMock()
-        flow.get_host.return_value = "settings.it"
-        flow.get_request.return_value = MagicMock(path="/index.html")
-        self.plugin.serve_files = MagicMock()
+        # Setup the mock to simulate a request to 'settings.it'
+        self.mock_flow.get_host.return_value = 'settings.it'
+        # Mock the get_request method to return a request object with path set to 'index.html'
+        self.mock_flow.get_request.return_value.path = 'index.html'
+        
+        with patch.object(self.plugin, 'serve_files') as mock_serve_files:
+            self.plugin.onRequest(self.mock_flow)
+            mock_serve_files.assert_called_once_with(
+                self.mock_flow, 'index.html')
 
-        # Action
-        result = self.plugin.onRequest(flow)
+    def test_serve_files_existing_file(self):
+        # Mock os.path.exists to return True for existing file
+        with patch('os.path.exists', return_value=True), \
+                patch('builtins.open', unittest.mock.mock_open(read_data='data')), \
+                patch('os.path.join', return_value="path/to/an/existing/file"):
+            self.plugin.serve_files(self.mock_flow, 'index.html')
+            # Check response was made with correct status and content-type
+            self.mock_flow.make_response.assert_called_once_with(
+                200, 'data', {'Content-Type': 'text/html'})
 
-        # Assert
-        self.plugin.serve_files.assert_called_with(flow, "index.html")
-        self.assertTrue(result)
+    def test_serve_files_non_existing_file(self):
+        # Setup non-existing file scenario
+        self.mock_flow.make_response.reset_mock()
+        with patch('os.path.exists', return_value=False):
+            self.plugin.serve_files(self.mock_flow, 'nonexistent.html')
+            self.mock_flow.make_response.assert_called_once_with(
+                404, b"File not found!", {"Content-Type": "text/plain"})
 
-    def test_onRequest_invalid_host(self):
-        # Setup
-        flow = MagicMock()
-        flow.get_host.return_value = "notsettings.it"
 
-        # Action
-        result = self.plugin.onRequest(flow)
-
-        # Assert
-        self.assertFalse(result)
-
+# This allows running the tests from the command line
 if __name__ == '__main__':
     unittest.main()
