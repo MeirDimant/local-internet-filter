@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/ComponentsExtentionsClasses.css";
 
-// Define the type for the state that handles the list of plugins
-type Plugin = string; // Assuming plugin names are strings, adjust based on your actual data structure
+type Plugin = string;
 
 const PluginManager: React.FC = () => {
   const [plugins, setPlugins] = useState<Plugin[]>([]);
@@ -14,7 +13,6 @@ const PluginManager: React.FC = () => {
     navigate("/plugins-list");
   };
 
-  // Fetch plugins from the server
   useEffect(() => {
     fetchPlugins();
   }, []);
@@ -53,7 +51,6 @@ const PluginManager: React.FC = () => {
     }
   };
 
-  // Handle file uploads
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -70,7 +67,7 @@ const PluginManager: React.FC = () => {
         body: formData,
       });
       if (response.ok) {
-        fetchPlugins(); // Refresh the list after upload
+        fetchPlugins();
         alert("File uploaded successfully");
       } else {
         throw new Error("Failed to upload file");
@@ -82,7 +79,6 @@ const PluginManager: React.FC = () => {
     setUploading(false);
   };
 
-  // Handle plugin deletion
   const handleDelete = async (pluginName: Plugin) => {
     try {
       const response = await fetch(`/api/plugins`, {
@@ -93,7 +89,7 @@ const PluginManager: React.FC = () => {
         body: JSON.stringify({ plugin_name: pluginName }),
       });
       if (response.ok) {
-        fetchPlugins(); // Refresh the list after deletion
+        fetchPlugins();
         alert("Plugin removed successfully");
       } else {
         throw new Error("Failed to delete plugin");

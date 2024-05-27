@@ -18,7 +18,7 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
         const data: string[] = await response.json();
         setDomains(data);
         if (data.length > 0) {
-          setDomainName(data[0]); // Set default domain if list is not empty
+          setDomainName(data[0]);
         }
         setIsLoading(false);
       } catch (error) {
@@ -41,7 +41,7 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
       });
       if (response.ok) {
         setContent("");
-        onContentAdded(); // Refresh content list
+        onContentAdded();
       }
     } catch (error) {
       console.error("Error adding content:", error);
@@ -49,11 +49,11 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show loading message while fetching
+    return <div>Loading...</div>; 
   }
 
   if (domains.length === 0) {
-    return <div>There are no approved domains added.</div>; // Show message if no domains
+    return <div>There are no approved domains added.</div>; 
   }
 
   return (

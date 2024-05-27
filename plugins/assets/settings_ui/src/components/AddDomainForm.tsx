@@ -14,11 +14,11 @@ const AddDomainForm: React.FC<AddDomainFormProps> = ({ onDomainAdded }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ domain: newDomain }), // Assuming the backend expects an object with a domain key
+        body: JSON.stringify({ domain: newDomain }), 
       });
       if (response.ok) {
-        setNewDomain(""); // clear input field
-        onDomainAdded(); // Notify parent to refresh domain list
+        setNewDomain(""); 
+        onDomainAdded(); 
       }
     } catch (error) {
       console.error("Error adding domain:", error);

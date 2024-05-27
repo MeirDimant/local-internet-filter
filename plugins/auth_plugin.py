@@ -39,25 +39,20 @@ class AuthPlugin(PluginBase):
         return result
 
     def register(self, flow: IFlow, un: str, pw: str):
-        # 1. Hash pw
         hashed_pw = hashlib.sha256(pw.encode()).hexdigest()
         password_in_db = self.db.search('users', 'password', hashed_pw)
 
-        # 2. If already in dal, break flow
         if password_in_db is not None:
             response_content = json.dumps({'message': 'Try another password'})
             flow.make_response(
                 403, response_content, {"Content-Type": "application/json"})
 
-        # 3. Save in dal
         self.db.insert('users', {'user-name': un, 'password': hashed_pw})
         response_content = json.dumps({'message': 'You have registerd.'})
         flow.make_response(
             200, response_content, {"Content-Type": "application/json"})
 
     def log_in(self, flow: IFlow, un: str, pw: str):
-
-        # 1. Get un and hashed_pw
         user = self.db.search('users', 'user-name', un)
         if user is None:
             response_content = json.dumps({'message': 'Invalid cridentials'})
@@ -66,7 +61,7 @@ class AuthPlugin(PluginBase):
 
         stored_hashed_password = user[0]['password']
         hashed_input_password = hashlib.sha256(pw.encode()).hexdigest()
-        # 2. Compare using lib
+        
         if hashed_input_password == stored_hashed_password:
             response_content = json.dumps({'message': 'You are logged in.'})
             flow.make_response_with_cookie(

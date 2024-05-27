@@ -17,9 +17,9 @@ const RegisterPage: React.FC = () => {
         body: JSON.stringify({ username, password }),
       });
       if (response.ok) {
-        setUsername(""); // clear input field
-        setPassword(""); // clear input field
-        navigate("/login"); // redirect to login page after successful registration
+        setUsername("");
+        setPassword("");
+        navigate("/login");
       }
     } catch (error) {
       console.error("Registration failed", error);

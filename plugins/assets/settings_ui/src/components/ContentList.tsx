@@ -40,7 +40,7 @@ const ContentList: React.FC<ContentListProps> = ({
         },
         body: JSON.stringify({ domain_name: domainName, content }),
       });
-      onContentChanged(); // Refresh content list
+      onContentChanged();
     } catch (error) {
       console.error("Error deleting content:", error);
     }

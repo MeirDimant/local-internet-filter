@@ -61,11 +61,9 @@ class FilterContent(PluginBase):
 
                 if content not in content_list:
                     content_list.append(content)
-                    # Update the content in the database, serializing the list back to a string
                     self.db.update(
                         'contents', {'content': content_list}, 'domain_name', domain_name)
             else:
-                # Insert new content
                 self.db.insert(
                     'contents', {'domain_name': domain_name, 'content': [content]})
 
@@ -126,27 +124,17 @@ class FilterContent(PluginBase):
         normalized_host = host[len("www."):] if host.startswith(
             "www.") else host
 
-        # Check if the normalized host matches any domain_name in self.contents
         for content_entry in self.contents:
-            # if normalized_host == content_entry['domain_name']:
             if content_entry['domain_name'] in normalized_host:
-                # Your code here
-                # A match is found; now check if the Content-Type header matches the regex in content_entry['content']
                 response_headers = flow.get_response().headers
                 content_type_header = response_headers.get('Content-Type', '')
 
-                if content_type_header:  # Checks if the Content-Type header is not empty
+                if content_type_header:
                     content_type = ContentType.parse(content_type_header)
 
                     if content_type.type not in content_entry['content']:
-                        # If the Content-Type header matches the regex, block the response
-                        # Here, you might want to log the event, clear the response, or set a custom error message.
-                        # flow.set_response_body("This content type is not allowed.")
                         flow.kill()
-                        return False  # Indicating the response has been modified and should be considered blocked
+                        return False
 
-                    # If a matching domain is found but the content type does not match the regex, allow the response to pass
                     break
-
-        # If no matching domain_name or if the content type does not match the regex, allow the response to pass through
         return True

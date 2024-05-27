@@ -12,8 +12,8 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     await authContext?.login(username, password);
     if (authContext?.isAuthenticated) {
-      setUsername(""); // clear input field
-      setPassword(""); // clear input field
+      setUsername("");
+      setPassword("");
     }
   };
 

@@ -16,10 +16,6 @@ import PluginsList from "./components/PluginsList";
 import AddPlugin from "./components/AddPlugin";
 
 const App: React.FC = () => {
-  // useEffect(() => {
-
-  //   fetchContents();
-  // });
 
   return (
     <AuthProvider>
