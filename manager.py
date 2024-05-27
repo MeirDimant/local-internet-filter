@@ -14,6 +14,10 @@ class Manager():
             print(plugin.title())
 
     def onRequest(self):
+        """
+        Execute the onRequest method for each plugin in the list.
+        Stops execution if a plugin's onRequest method returns False.
+        """
         for plugin in self.plugins:
             if hasattr(plugin, 'onRequest'):
                 flag = plugin.onRequest(self.flow)
@@ -21,6 +25,10 @@ class Manager():
                     break
 
     def onResponse(self):
+        """
+        Execute the onResponse method for each plugin in the list.
+        Stops execution if a plugin's onResponse method returns False.
+        """
         for plugin in self.plugins:
             if hasattr(plugin, 'onResponse'):
                 flag = plugin.onResponse(self.flow)

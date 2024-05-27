@@ -7,6 +7,7 @@ from core.iflow import IFlow
 from core.plugin_base import PluginBase
 from dal_db import DalDB
 
+# HTTP status codes and content types
 HTTP_OK = 200
 HTTP_BAD_REQUEST = 400
 CONTENT_TYPE_JSON = "application/json"
@@ -15,7 +16,7 @@ CONTENT_TYPE_TEXT = "text/plain"
 
 def normalize_name(db_name):
     """
-    Convert the name from the DB format ("Plugin Name") to a filename ("plugin_name")
+    Convert the plugin name from the DB format ("Plugin Name") to a filename ("plugin_name")
     and class name ("PluginName").
     """
     file_name = db_name.lower().replace(" ", "_")
@@ -25,7 +26,7 @@ def normalize_name(db_name):
 
 def load_plugins(plugin_names):
     """
-    Dynamically load and instantiate plugins based on their names.
+    Dynamically load and instantiate plugins based on the plugins list.
     """
     plugins = []
     for db_name in plugin_names:
@@ -39,6 +40,9 @@ def load_plugins(plugin_names):
 class PluginsManagement(PluginBase):
 
     def __init__(self) -> None:
+        """
+        Initialize PluginsManagement with database access and plugin lists.
+        """
         self.db = DalDB()
         self.plugins_list = self.db.fetch_all('plugins')
 
@@ -48,6 +52,7 @@ class PluginsManagement(PluginBase):
         self.request_plugins_instances = []
         self.response_plugins_instances = []
 
+        # If no plugins are in the database, populate with all the existing plugins in the directory
         if not self.plugins_list:
             plugins_dir = os.path.join(os.path.dirname(__file__))
             plugin_files = os.listdir(plugins_dir)
@@ -64,18 +69,26 @@ class PluginsManagement(PluginBase):
             self.db.insert(
                 'plugins', {'response_plugins_list': formatted_plugins_list})
 
+        # Fetch the plugins lists form the DB and assign them to request_plugins_list and response_plugins_list
         self.fetch_plugins_list()
 
     def title(self) -> str:
         return "Plugins Management"
 
     def set_plugins_instances(self):
+        """
+        Load and set instances of request and response plugins.
+        """
         self.request_plugins_instances = load_plugins(
             self.request_plugins_list)
         self.response_plugins_instances = load_plugins(
             self.response_plugins_list)
 
     def fetch_plugins_list(self):
+        """
+        Fetch the list of plugins from the database 
+        and assign it to request_plugins_list and response_plugins_list.
+        """
         self.plugins_list = self.db.fetch_all('plugins')
 
         for item in self.plugins_list:
@@ -85,6 +98,9 @@ class PluginsManagement(PluginBase):
                 self.response_plugins_list = item['response_plugins_list']
 
     def update_and_refresh_plugins(self, new_request_plugins_list, new_response_plugins_list):
+        """
+        Update the plugin lists in the database and refresh the request_plugins_list and response_plugins_list.
+        """
         self.db.update('plugins', {
             'request_plugins_list': new_request_plugins_list}, 'request_plugins_list', self.request_plugins_list)
         self.db.update('plugins', {'response_plugins_list': new_response_plugins_list},
@@ -104,46 +120,56 @@ class PluginsManagement(PluginBase):
 
     def handle_get(self, flow):
         """Handles GET requests."""
+        # returns to the user the plugins lists
         response_content = json.dumps(self.plugins_list)
         flow.make_response(HTTP_OK, response_content, {
                            "Content-Type": CONTENT_TYPE_JSON})
 
     def handle_post(self, flow):
-        """Handles POST requests with file upload."""
-        print(flow.get_request().content.decode())
+        """Handles POST requests with file upload.
+        Adding new plugins."""
+        # Decode the raw content of the request and extract the filename and its content using a regex pattern
         raw_data = flow.get_request().content.decode()
         pattern = r'filename="(.+\.py)"\s+Content-Type:\s+text/x-python\s+(.*?)\s+-----------------------------'
         match = re.search(pattern, raw_data, re.DOTALL)
 
+        # if the file is valid, extract the filename and file content, save the file, and update the plugin lists
         if match:
             filename = match.group(1)
             file_content = match.group(2).strip()
             file_path = os.path.join(os.path.dirname(__file__), filename)
+
+            # Write the extracted content to a file
             with open(file_path, 'w') as file:
                 file.write(file_content)
                 print(f"File saved as {filename}")
 
-            plugin_name = filename[:-3].replace('_', ' ').title()
+            plugin_name = filename[:-3].replace('_', ' ').title() # Create a plugin name from the filename
 
+            # Update the request and response plugin lists with the new plugin
             new_request_plugins_list = self.request_plugins_list + \
                 [plugin_name]
             new_response_plugins_list = self.response_plugins_list + \
                 [plugin_name]
 
+            # Update the lists in the database
             self.update_and_refresh_plugins(
                 new_request_plugins_list, new_response_plugins_list)
 
+            #Reload the instances to include the new plugin
             self.set_plugins_instances()
 
             response_content = "File uploaded successfully."
             flow.make_response(HTTP_OK, response_content, {
-                "Content-Type": CONTENT_TYPE_TEXT})
+                "Content-Type": CONTENT_TYPE_TEXT}) # Send a success response
         else:
+            # If no match is found, send an error response
             flow.make_response(HTTP_BAD_REQUEST, "Invalid file", {
                 "Content-Type": CONTENT_TYPE_TEXT})
 
     def handle_put(self, flow):
-        """Handles POST requests."""
+        """Handles PUT requests.
+        Updating the plugins lists"""
         new_plugins_list = json.loads(
             flow.get_request().content.decode())
 
@@ -163,7 +189,7 @@ class PluginsManagement(PluginBase):
         request_data = json.loads(flow.get_request().content.decode())
         plugin_name = request_data.get('plugin_name')
 
-        # Format the filename
+        # Format the filename base on the plugin name
         filename = plugin_name.replace(' ', '_').lower() + '.py'
         file_path = os.path.join(os.path.dirname(__file__), filename)
 
@@ -185,6 +211,7 @@ class PluginsManagement(PluginBase):
         self.update_and_refresh_plugins(
             new_request_plugins_list, new_response_plugins_list)
 
+        #Reload the instances to exclude the removed plugin
         self.set_plugins_instances()
 
         flow.make_response(HTTP_OK, f"Plugin '{plugin_name}' removed successfully.", {
