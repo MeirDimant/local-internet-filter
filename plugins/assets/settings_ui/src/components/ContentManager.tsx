@@ -3,8 +3,10 @@ import ContentList from "./ContentList";
 import AddContentForm from "./AddContentForm";
 
 const ContentManager: React.FC = () => {
+  // State variable to manage the refresh key for re-fetching content list
   const [refreshKey, setRefreshKey] = useState<number>(0);
 
+  // Function to handle content changes to re-render the component
   const handleContentChanged = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };

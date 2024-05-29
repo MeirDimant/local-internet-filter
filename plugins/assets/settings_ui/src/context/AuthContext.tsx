@@ -1,5 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 
+// Define the shape of the authentication context
 interface AuthContextProps {
   registered: boolean;
   isAuthenticated: boolean;
@@ -8,6 +9,7 @@ interface AuthContextProps {
   login: (username: string, password: string) => void;
 }
 
+// Create the authentication context with `undefined` default to catch misuse
 export const AuthContext = createContext<AuthContextProps | undefined>(
   undefined
 );
@@ -17,10 +19,12 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  // State variables to manage authentication status, registration status, and loading state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [registered, setRegistered] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Function to handle user login
   const login = async (username: string, password: string) => {
     try {
       const response = await fetch("http://settings.it/api/auth/login", {
@@ -38,6 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Function to check if the user is authenticated
   const checkAuth = async () => {
     try {
       const response = await fetch("http://settings.it/api/auth/check");
@@ -48,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Function to check if there are any registered users
   const checkIfRegistered = async () => {
     try {
       const response = await fetch("api/auth/any");
@@ -61,6 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // useEffect hook to initialize authentication status and registration status
   useEffect(() => {
     const initAuth = async () => {
       await checkAuth();
@@ -72,6 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
+    // Provide the authentication context to the entire app
     <AuthContext.Provider
       value={{ registered, isAuthenticated, loading, checkAuth, login }}
     >

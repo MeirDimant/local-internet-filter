@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const PluginsList: React.FC = () => {
+  // State variables to manage the list of request and response plugins
   const [requestPluginsList, setRequestPluginsList] = useState<string[]>([]);
   const [responsePluginsList, setResponsePluginsList] = useState<string[]>([]);
 
+  // Function to handle the drag end event for reordering plugins
   const handleDragEnd = (result: any) => {
     const { source, destination } = result;
     if (!destination || source.droppableId !== destination.droppableId) return;
@@ -23,6 +25,7 @@ const PluginsList: React.FC = () => {
     setList(list);
   };
 
+  // Function to send the new order of plugins to the DB
   const handleSendPluginsList = async () => {
     try {
       await fetch("http://settings.it/api/plugins", {
@@ -40,6 +43,7 @@ const PluginsList: React.FC = () => {
     }
   };
 
+  // Function to handle plugin deletion from the request or the response list
   const handleDeletePlugin = (
     index: number,
     listType: "request" | "response"
@@ -56,6 +60,7 @@ const PluginsList: React.FC = () => {
     }
   };
 
+  // useEffect hook to fetch the request and response lists when the component mounts
   useEffect(() => {
     const fetchPlugins = async () => {
       try {
@@ -81,8 +86,12 @@ const PluginsList: React.FC = () => {
     <div className="PluginsList">
       <div className="container">
         <h1>Plugin List</h1>
+
+        {/* Drag and Drop context for handling drag events */}
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="droppable-container">
+
+            {/* Droppable area for request plugins */}
             <Droppable droppableId="request-plugins">
               {(provided) => (
                 <div>
@@ -92,6 +101,7 @@ const PluginsList: React.FC = () => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
+                    {/* List of draggable request plugins */}
                     {requestPluginsList.map((plugin, index) => (
                       <Draggable
                         key={plugin}
@@ -106,6 +116,7 @@ const PluginsList: React.FC = () => {
                             {...provided.dragHandleProps}
                           >
                             <h4>{plugin}</h4>
+                            {/* Button to delete the request plugin from the list */}
                             <button
                               className="delete-btn"
                               onClick={() =>
@@ -118,11 +129,14 @@ const PluginsList: React.FC = () => {
                         )}
                       </Draggable>
                     ))}
+                    {/* Placeholder for maintaining the space of dragged items */}
                     {provided.placeholder}
                   </ul>
                 </div>
               )}
             </Droppable>
+
+            {/* Droppable area for response plugins */}
             <Droppable droppableId="response-plugins">
               {(provided) => (
                 <div>
@@ -132,6 +146,7 @@ const PluginsList: React.FC = () => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
+                    {/* List of draggable response plugins */}
                     {responsePluginsList.map((plugin, index) => (
                       <Draggable
                         key={plugin}
@@ -146,6 +161,7 @@ const PluginsList: React.FC = () => {
                             {...provided.dragHandleProps}
                           >
                             <h4>{plugin}</h4>
+                            {/* Button to delete the response plugin from the list */}
                             <button
                               className="delete-btn"
                               onClick={() =>
@@ -158,6 +174,7 @@ const PluginsList: React.FC = () => {
                         )}
                       </Draggable>
                     ))}
+                    {/* Placeholder for maintaining the space of dragged items */}
                     {provided.placeholder}
                   </ul>
                 </div>
@@ -165,6 +182,8 @@ const PluginsList: React.FC = () => {
             </Droppable>
           </div>
         </DragDropContext>
+
+        {/* Button to send the new order of plugins */}
         <button className="add-btn" onClick={handleSendPluginsList}>
           Send New Order
         </button>

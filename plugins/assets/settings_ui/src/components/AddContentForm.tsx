@@ -5,11 +5,13 @@ interface AddContentFormProps {
 }
 
 const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
+  // State variables to manage domains, selected domain, content type, and loading state
   const [domains, setDomains] = useState<string[]>([]);
   const [domainName, setDomainName] = useState("");
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // useEffect hook to fetch approved domains when the component mounts
   useEffect(() => {
     const fetchDomains = async () => {
       setIsLoading(true);
@@ -18,7 +20,7 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
         const data: string[] = await response.json();
         setDomains(data);
         if (data.length > 0) {
-          setDomainName(data[0]);
+          setDomainName(data[0]); // Set the first domain as the default selected domain
         }
         setIsLoading(false);
       } catch (error) {
@@ -30,6 +32,7 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
     fetchDomains();
   }, []);
 
+  // Function to handle adding content to the selected domain
   const handleAddContent = async () => {
     try {
       const response = await fetch("http://settings.it/api/contents", {
@@ -40,24 +43,27 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
         body: JSON.stringify({ domain_name: domainName, content }),
       });
       if (response.ok) {
-        setContent("");
-        onContentAdded();
+        setContent(""); // Reset content input
+        onContentAdded(); // Callback to indicate content was added
       }
     } catch (error) {
       console.error("Error adding content:", error);
     }
   };
 
+  // Show loading message while fetching domains
   if (isLoading) {
     return <div>Loading...</div>; 
   }
 
+  // Show message if no approved domains are available
   if (domains.length === 0) {
     return <div>There are no approved domains added.</div>; 
   }
 
   return (
     <div className="add-section">
+      {/* Dropdown to select the domain */}
       <select
         className="add-input"
         value={domainName}
@@ -69,6 +75,8 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
           </option>
         ))}
       </select>
+
+      {/* Dropdown to select the content type */}
       <select
         className="add-input"
         value={content}
@@ -84,6 +92,8 @@ const AddContentForm: React.FC<AddContentFormProps> = ({ onContentAdded }) => {
         <option value="text">Text</option>
         <option value="video">Video</option>
       </select>
+
+      {/* Button to add content to the selected domain */}
       <button className="add-btn" onClick={handleAddContent}>
         Update allowed content to the chosen domain
       </button>

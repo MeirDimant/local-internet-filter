@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import "./styles/RegisterPage.css";
 
 const RegisterPage: React.FC = () => {
+  // State for username and password inputs
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
+  // Function to handle the registration process
   const handleRegister = async () => {
     try {
       const response = await fetch("http://settings.it/api/auth/register", {
@@ -16,6 +18,8 @@ const RegisterPage: React.FC = () => {
         },
         body: JSON.stringify({ username, password }),
       });
+
+      // If registration is successful, clear inputs and navigate to login page
       if (response.ok) {
         setUsername("");
         setPassword("");

@@ -15,8 +15,10 @@ const ContentList: React.FC<ContentListProps> = ({
   refreshKey,
   onContentChanged,
 }) => {
+  // State variable to store the list of content objects
   const [contents, setContents] = useState<Content[]>([]);
 
+  // useEffect hook to fetch contents when the component mounts or refreshKey changes
   useEffect(() => {
     const fetchContents = async () => {
       try {
@@ -31,6 +33,7 @@ const ContentList: React.FC<ContentListProps> = ({
     fetchContents();
   }, [refreshKey]);
 
+  // Function to handle allowed content type deletion
   const handleDelete = async (domainName: string, content: string) => {
     try {
       await fetch("http://settings.it/api/contents", {
@@ -40,7 +43,7 @@ const ContentList: React.FC<ContentListProps> = ({
         },
         body: JSON.stringify({ domain_name: domainName, content }),
       });
-      onContentChanged();
+      onContentChanged(); // Callback to indicate content was changed
     } catch (error) {
       console.error("Error deleting content:", error);
     }
@@ -49,6 +52,7 @@ const ContentList: React.FC<ContentListProps> = ({
   return (
     <div>
       <h1>Content List</h1>
+      {/* Render a list of allowed contents, nested under each domain's name */}
       <ul className="list">
         {contents.map(({ domain_name, content }) => (
           <li key={domain_name} className="list-item">
