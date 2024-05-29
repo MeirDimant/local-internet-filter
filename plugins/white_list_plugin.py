@@ -9,6 +9,8 @@ CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_TEXT = "text/plain"
 
 
+# This plugin manages the approved domains list 
+# also, this plugin responsible for blocking unapproved domains
 class WhiteListPlugin(PluginBase):
     def __init__(self) -> None:
         """

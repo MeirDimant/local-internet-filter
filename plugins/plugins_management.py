@@ -36,7 +36,11 @@ def load_plugins(plugin_names):
         plugins.append(plugin_class())
     return plugins
 
-
+# This plugin manages two types of lists the lists of the plugins names and the lists of the plugins instances 
+# Both types of lists are divided into request plugins and response plugins 
+# The request plugins are plugins that run on the user's request and the response when the user get a response
+# The plugins instances are initiated based on the lists of the plugin names and in the same order as they 
+# are in the lists
 class PluginsManagement(PluginBase):
 
     def __init__(self) -> None:
