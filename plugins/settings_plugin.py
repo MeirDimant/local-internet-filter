@@ -9,6 +9,11 @@ HTTP_BAD_REQUEST = 400
 CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_TEXT = "text/plain"
 
+def is_static_file(path):
+    """Check if the requested path is for a static file."""
+    static_extensions = ['.html', '.css', '.js', '.png', '.jpg', '.gif', '.woff', '.woff2', '.ttf', '.eot', '.json', '.ico']
+    return any(path.endswith(ext) for ext in static_extensions)
+
 
 class SettingsPlugin(PluginBase):
 
@@ -20,7 +25,7 @@ class SettingsPlugin(PluginBase):
 
     def serve_files(self, flow: IFlow, path: str):
         """Serve static files"""
-        
+
         # Determine the root directory for static files
         root = os.path.join(os.path.dirname(
             os.path.realpath(__file__)), 'assets/settings_ui/build')
@@ -43,10 +48,11 @@ class SettingsPlugin(PluginBase):
 
     def onRequest(self, flow: IFlow) -> bool:
         host = flow.get_host()
+        path = flow.get_request().path
 
         # If the user trys to reach "setting.it" the plugin will return the static files of the UI
         if host == "settings.it":
-            self.serve_files(
-                flow, flow.get_request().path.lstrip("/") or "index.html")
+            if path == "/" or is_static_file(path):
+                self.serve_files(flow, path.lstrip("/") or "index.html")
 
         return True
