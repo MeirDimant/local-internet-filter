@@ -58,26 +58,26 @@ class PluginsManagement(PluginBase):
 
         # If no plugins are in the database, populate with all the existing plugins in the directory
         if not self.plugins_list:
-            plugins_dir = os.path.join(os.path.dirname(__file__))
-            plugin_files = os.listdir(plugins_dir)
-            plugins_list = [os.path.splitext(file)[0] for file in plugin_files if file.endswith(
-                '.py') and not file.startswith('__init__')]
-
-            formatted_plugins_list = []
-            for plugin in plugins_list:
-                plugin_name = plugin.replace('_', ' ').title()
-                formatted_plugins_list.append(plugin_name)
-
-            self.db.insert(
-                'plugins', {'request_plugins_list': formatted_plugins_list})
-            self.db.insert(
-                'plugins', {'response_plugins_list': formatted_plugins_list})
+            self.initialize_plugins_from_directory()
 
         # Fetch the plugins lists form the DB and assign them to request_plugins_list and response_plugins_list
         self.fetch_plugins_list()
 
     def title(self) -> str:
         return "Plugins Management"
+    
+    def initialize_plugins_from_directory(self):
+        """
+        Initialize plugins from the directory if the database is empty.
+        """
+        plugins_dir = os.path.join(os.path.dirname(__file__))
+        plugin_files = os.listdir(plugins_dir)
+        plugins_list = [os.path.splitext(file)[0] for file in plugin_files if file.endswith('.py') and not file.startswith('__init__')]
+
+        formatted_plugins_list = [plugin.replace('_', ' ').title() for plugin in plugins_list]
+
+        self.db.insert('plugins', {'request_plugins_list': formatted_plugins_list})
+        self.db.insert('plugins', {'response_plugins_list': formatted_plugins_list})
 
     def set_plugins_instances(self):
         """
