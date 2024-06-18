@@ -26,7 +26,7 @@ def normalize_name(db_name):
 
 def load_plugins(plugin_names):
     """
-    Dynamically load and instantiate plugins based on the plugins list.
+    Dynamically load and instantiate plugins based on a plugins list.
     """
     plugins = []
     for db_name in plugin_names:
@@ -47,8 +47,8 @@ class PluginsManagement(PluginBase):
         """
         Initialize PluginsManagement with database access and plugin lists.
         """
-        self.db = DalDB()
-        self.plugins_list = self.db.fetch_all('plugins')
+        self.db = DalDB()  # Initialize database access
+        self.plugins_list = self.db.fetch_all('plugins') # Fetch all plugins names from the database
 
         self.request_plugins_list = []
         self.response_plugins_list = []
@@ -68,7 +68,7 @@ class PluginsManagement(PluginBase):
     
     def initialize_plugins_from_directory(self):
         """
-        Initialize plugins from the directory if the database is empty.
+        Initialize plugins lists from the directory if there are no lists in the database.
         """
         plugins_dir = os.path.join(os.path.dirname(__file__))
         plugin_files = os.listdir(plugins_dir)
