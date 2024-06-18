@@ -24,13 +24,13 @@ class Manager():
                 if (not flag):
                     break
 
-    def onResponse(self):
+    def on_response(self):
         """
         Execute the onResponse method for each plugin in the list.
         Stops execution if a plugin's onResponse method returns False.
         """
         for plugin in self.plugins:
-            if hasattr(plugin, 'onResponse'):
-                flag = plugin.onResponse(self.flow)
+            if hasattr(plugin, 'on_response'):
+                flag = plugin.on_response(self.flow)
                 if (not flag):
                     break

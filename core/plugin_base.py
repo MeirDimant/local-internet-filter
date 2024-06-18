@@ -13,6 +13,6 @@ class PluginBase(metaclass=SingletonABCMeta):
         """Process the request. Return False to stop further processing."""
         pass
 
-    def onResponce(self, flow: IFlow) -> bool:
+    def on_responce(self, flow: IFlow) -> bool:
         """Process the response. Return False to stop further processing."""
         pass

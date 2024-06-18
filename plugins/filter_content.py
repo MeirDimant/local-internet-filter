@@ -129,7 +129,7 @@ class FilterContent(PluginBase):
 
             return True
 
-    def onResponse(self, flow: IFlow) -> bool:
+    def on_response(self, flow: IFlow) -> bool:
         # Extracting the host to see if it is in the list as domain name
         host = flow.get_host()
         normalized_host = host[len("www."):] if host.startswith(

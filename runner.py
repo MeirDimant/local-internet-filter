@@ -28,7 +28,7 @@ class Runner():
         self.mitm_flow = MitmFlow(flow)
         self.manager = Manager(
             plugin_management.response_plugins_instances, self.mitm_flow)
-        self.manager.onResponse()
+        self.manager.on_response()
 
 
 # Add an instance of Runner to the mitmproxy addons list
