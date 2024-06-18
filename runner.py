@@ -8,17 +8,20 @@ debugpy.listen(("127.0.0.1", 5678))
 print("Waiting for debugger attach")
 debugpy.wait_for_client()
 
-# Initialize the plugin management and setting the plugin instances
+# Initialize the plugin management
 plugin_management = PluginsManagement()
+# Initialize and setting the plugin instances in the plugin management
 plugin_management.set_plugins_instances()
 
 
 class Runner():
 
     def request(self, flow):
-        self.mitm_flow = MitmFlow(flow) # Create a MitmFlow instance with the mitmproxy flow object 
+        # Create a MitmFlow instance with the mitmproxy flow object
+        self.mitm_flow = MitmFlow(flow)  
+        # Initialize the Manager with request plugins and the current MitmFlow
         self.manager = Manager(
-            plugin_management.request_plugins_instances, self.mitm_flow) # Initialize the Manager with request plugins and the current MitmFlow
+            plugin_management.request_plugins_instances, self.mitm_flow) 
         self.manager.onRequest()
 
     def response(self, flow):
