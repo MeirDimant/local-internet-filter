@@ -13,14 +13,14 @@ class Manager():
         for plugin in self.plugins:
             print(plugin.title())
 
-    def onRequest(self):
+    def on_request(self):
         """
         Execute the onRequest method for each plugin in the list.
         Stops execution if a plugin's onRequest method returns False.
         """
         for plugin in self.plugins:
-            if hasattr(plugin, 'onRequest'):
-                flag = plugin.onRequest(self.flow)
+            if hasattr(plugin, 'on_request'):
+                flag = plugin.on_request(self.flow)
                 if (not flag):
                     break
 

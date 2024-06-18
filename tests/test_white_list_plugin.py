@@ -1,3 +1,4 @@
+from plugins.white_list_plugin import WhiteListPlugin
 import json
 import unittest
 from unittest.mock import Mock, patch
@@ -5,7 +6,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))
-from plugins.white_list_plugin import WhiteListPlugin
 
 HTTP_OK = 200
 HTTP_BAD_REQUEST = 400
@@ -28,7 +28,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         # Mocking handle_request to chek if called
         self.plugin.handle_request = Mock()
 
-        result = self.plugin.onRequest(self.mock_flow)
+        result = self.plugin.on_request(self.mock_flow)
 
         self.plugin.handle_request.assert_called_once()
         self.assertTrue(
@@ -40,7 +40,7 @@ class TestWhiteListPlugin(unittest.TestCase):
 
         self.plugin.handle_request = Mock()
 
-        result = self.plugin.onRequest(self.mock_flow)
+        result = self.plugin.on_request(self.mock_flow)
 
         self.plugin.handle_request.assert_not_called()
         self.assertTrue(
@@ -50,7 +50,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_host.return_value = "unapproved.domain.com"
         self.plugin.approved_domains = ["this.is.approved.domain"]
 
-        result = self.plugin.onRequest(self.mock_flow)
+        result = self.plugin.on_request(self.mock_flow)
 
         self.mock_flow.kill.assert_called_once()
         self.assertFalse(

@@ -18,17 +18,18 @@ class Runner():
 
     def request(self, flow):
         # Create a MitmFlow instance with the mitmproxy flow object
-        self.mitm_flow = MitmFlow(flow)  
+        self.mitm_flow = MitmFlow(flow)
         # Initialize the Manager with request plugins and the current MitmFlow
         self.manager = Manager(
-            plugin_management.request_plugins_instances, self.mitm_flow) 
-        self.manager.onRequest()
+            plugin_management.request_plugins_instances, self.mitm_flow)
+        self.manager.on_request()
 
     def response(self, flow):
         self.mitm_flow = MitmFlow(flow)
         self.manager = Manager(
             plugin_management.response_plugins_instances, self.mitm_flow)
         self.manager.onResponse()
+
 
 # Add an instance of Runner to the mitmproxy addons list
 addons = [Runner()]

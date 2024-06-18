@@ -9,7 +9,7 @@ CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_TEXT = "text/plain"
 
 
-# This plugin manages the approved domains list 
+# This plugin manages the approved domains list
 # also, this plugin responsible for blocking unapproved domains
 class WhiteListPlugin(PluginBase):
     def __init__(self) -> None:
@@ -80,7 +80,7 @@ class WhiteListPlugin(PluginBase):
         flow.make_response(HTTP_OK, response_content, {
                            "Content-Type": CONTENT_TYPE_JSON})
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         """Handle incoming requests and manage access based on approved domains."""
         host = flow.get_host()
         normalized_host = host[len("www."):] if host.startswith(
@@ -96,5 +96,5 @@ class WhiteListPlugin(PluginBase):
 
         # Check if the host is in the approved domains list
         if not any(approved_domain in normalized_host for approved_domain in self.approved_domains):
-            flow.kill() # Kill the flow if the host is not approved
+            flow.kill()  # Kill the flow if the host is not approved
             return False

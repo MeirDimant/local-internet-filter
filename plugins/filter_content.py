@@ -13,10 +13,12 @@ CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_TEXT = "text/plain"
 
 # This plagin depends on the white list plugin
-# while the white list plugin handles a list of approved domains 
+# while the white list plugin handles a list of approved domains
 # this plugin is handling a list of allowed MIME contet types for each appreved domain
 # in case the user did not create a list of allowed content types the domain won't be restricted
 # and will pass with all content types.
+
+
 class FilterContent(PluginBase):
     def __init__(self) -> None:
         """
@@ -114,7 +116,7 @@ class FilterContent(PluginBase):
             flow.make_response(HTTP_BAD_REQUEST, "Something went wrong while removing item from the content-types list", {
                                "Content-Type": CONTENT_TYPE_TEXT})
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         host = flow.get_host()
         normalized_host = host[len("www."):] if host.startswith(
             "www.") else host
@@ -132,7 +134,6 @@ class FilterContent(PluginBase):
         host = flow.get_host()
         normalized_host = host[len("www."):] if host.startswith(
             "www.") else host
-
 
         for content_entry in self.contents:
             # Check to see if there is an entry in the list with the current host name

@@ -9,9 +9,11 @@ HTTP_BAD_REQUEST = 400
 CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_TEXT = "text/plain"
 
+
 def is_static_file(path):
     """Check if the requested path is for a static file."""
-    static_extensions = ['.html', '.css', '.js', '.png', '.jpg', '.gif', '.woff', '.woff2', '.ttf', '.eot', '.json', '.ico']
+    static_extensions = ['.html', '.css', '.js', '.png', '.jpg',
+                         '.gif', '.woff', '.woff2', '.ttf', '.eot', '.json', '.ico']
     return any(path.endswith(ext) for ext in static_extensions)
 
 
@@ -46,7 +48,7 @@ class SettingsPlugin(PluginBase):
             flow.make_response(404, b"File not found!", {
                 "Content-Type": "text/plain"})
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         host = flow.get_host()
         path = flow.get_request().path
 

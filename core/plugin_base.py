@@ -9,7 +9,7 @@ class PluginBase(metaclass=SingletonABCMeta):
         """Return the title of the plugin."""
         pass
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         """Process the request. Return False to stop further processing."""
         pass
 

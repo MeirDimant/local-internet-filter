@@ -13,7 +13,8 @@ def random_string(length: int):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for i in range(length))
 
-# Generate a random session string 
+
+# Generate a random session string
 session = random_string(20)
 
 
@@ -27,7 +28,7 @@ class AuthPlugin(PluginBase):
     def user_exist(self, flow: IFlow) -> None:
         """Check if any users exist in the database."""
         users = self.db.fetch_all('users')
-        
+
         if users:
             flow.make_response(200, json.dumps({"user_exist": True}), {
                                "Content-Type": "application/json"})
@@ -65,9 +66,9 @@ class AuthPlugin(PluginBase):
                 403, response_content, {"Content-Type": "application/json"})
 
         stored_hashed_password = user[0]['password']
-        # Hash the inpute password to compare with the stored hashed password 
+        # Hash the inpute password to compare with the stored hashed password
         hashed_input_password = hashlib.sha256(pw.encode()).hexdigest()
-        
+
         if hashed_input_password == stored_hashed_password:
             response_content = json.dumps({'message': 'You are logged in.'})
             flow.make_response_with_cookie(
@@ -77,7 +78,7 @@ class AuthPlugin(PluginBase):
             flow.make_response(
                 403, esponse_content, {"Content-Type": "application/json"})
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         host = flow.get_host()
 
         # Handle authentication-related API requests for the "settings.it" host
@@ -96,7 +97,7 @@ class AuthPlugin(PluginBase):
                         {'authenticated': False, 'message': 'user is Not authenticated'})
                     flow.make_response(403, response_content, {
                                        "Content-Type": "application/json"})
-            
+
             # Handle login and registration requests
             elif req.path.endswith("api/auth/login") or req.path.endswith("api/auth/register"):
                 un = json.loads(req.content.decode()).get('username')
@@ -106,7 +107,7 @@ class AuthPlugin(PluginBase):
                     self.log_in(flow, un, pw)
                 else:
                     self.register(flow, un, pw)
-            
+
             # Handle user existence check
             elif req.path.endswith("api/auth/any"):
                 self.user_exist(flow)

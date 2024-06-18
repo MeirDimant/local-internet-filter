@@ -1,9 +1,10 @@
+from plugins.settings_plugin import SettingsPlugin
 import unittest
 from unittest.mock import Mock, patch
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from plugins.settings_plugin import SettingsPlugin
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
 
 
 class TestSettingsPlugin(unittest.TestCase):
@@ -19,9 +20,9 @@ class TestSettingsPlugin(unittest.TestCase):
         self.mock_flow.get_host.return_value = 'settings.it'
         # Mock the get_request method to return a request object with path set to 'index.html'
         self.mock_flow.get_request.return_value.path = 'index.html'
-        
+
         with patch.object(self.plugin, 'serve_files') as mock_serve_files:
-            self.plugin.onRequest(self.mock_flow)
+            self.plugin.on_request(self.mock_flow)
             mock_serve_files.assert_called_once_with(
                 self.mock_flow, 'index.html')
 

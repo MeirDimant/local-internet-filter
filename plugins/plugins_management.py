@@ -36,11 +36,13 @@ def load_plugins(plugin_names):
         plugins.append(plugin_class())
     return plugins
 
-# This plugin manages two types of lists the lists of the plugins names and the lists of the plugins instances 
-# Both types of lists are divided into request plugins and response plugins 
+# This plugin manages two types of lists the lists of the plugins names and the lists of the plugins instances
+# Both types of lists are divided into request plugins and response plugins
 # The request plugins are plugins that run on the user's request and the response when the user get a response
-# The plugins instances are initiated based on the lists of the plugin names and in the same order as they 
+# The plugins instances are initiated based on the lists of the plugin names and in the same order as they
 # are in the lists
+
+
 class PluginsManagement(PluginBase):
 
     def __init__(self) -> None:
@@ -48,7 +50,8 @@ class PluginsManagement(PluginBase):
         Initialize PluginsManagement with database access and plugin lists.
         """
         self.db = DalDB()  # Initialize database access
-        self.plugins_list = self.db.fetch_all('plugins') # Fetch all plugins names from the database
+        # Fetch all plugins names from the database
+        self.plugins_list = self.db.fetch_all('plugins')
 
         self.request_plugins_list = []
         self.response_plugins_list = []
@@ -65,19 +68,23 @@ class PluginsManagement(PluginBase):
 
     def title(self) -> str:
         return "Plugins Management"
-    
+
     def initialize_plugins_from_directory(self):
         """
         Initialize plugins lists from the directory if there are no lists in the database.
         """
         plugins_dir = os.path.join(os.path.dirname(__file__))
         plugin_files = os.listdir(plugins_dir)
-        plugins_list = [os.path.splitext(file)[0] for file in plugin_files if file.endswith('.py') and not file.startswith('__init__')]
+        plugins_list = [os.path.splitext(file)[0] for file in plugin_files if file.endswith(
+            '.py') and not file.startswith('__init__')]
 
-        formatted_plugins_list = [plugin.replace('_', ' ').title() for plugin in plugins_list]
+        formatted_plugins_list = [plugin.replace(
+            '_', ' ').title() for plugin in plugins_list]
 
-        self.db.insert('plugins', {'request_plugins_list': formatted_plugins_list})
-        self.db.insert('plugins', {'response_plugins_list': formatted_plugins_list})
+        self.db.insert(
+            'plugins', {'request_plugins_list': formatted_plugins_list})
+        self.db.insert(
+            'plugins', {'response_plugins_list': formatted_plugins_list})
 
     def set_plugins_instances(self):
         """
@@ -148,7 +155,8 @@ class PluginsManagement(PluginBase):
                 file.write(file_content)
                 print(f"File saved as {filename}")
 
-            plugin_name = filename[:-3].replace('_', ' ').title() # Create a plugin name from the filename
+            # Create a plugin name from the filename
+            plugin_name = filename[:-3].replace('_', ' ').title()
 
             # Update the request and response plugin lists with the new plugin
             new_request_plugins_list = self.request_plugins_list + \
@@ -160,12 +168,12 @@ class PluginsManagement(PluginBase):
             self.update_and_refresh_plugins(
                 new_request_plugins_list, new_response_plugins_list)
 
-            #Reload the instances to include the new plugin
+            # Reload the instances to include the new plugin
             self.set_plugins_instances()
 
             response_content = "File uploaded successfully."
             flow.make_response(HTTP_OK, response_content, {
-                "Content-Type": CONTENT_TYPE_TEXT}) # Send a success response
+                "Content-Type": CONTENT_TYPE_TEXT})  # Send a success response
         else:
             # If no match is found, send an error response
             flow.make_response(HTTP_BAD_REQUEST, "Invalid file", {
@@ -215,13 +223,13 @@ class PluginsManagement(PluginBase):
         self.update_and_refresh_plugins(
             new_request_plugins_list, new_response_plugins_list)
 
-        #Reload the instances to exclude the removed plugin
+        # Reload the instances to exclude the removed plugin
         self.set_plugins_instances()
 
         flow.make_response(HTTP_OK, f"Plugin '{plugin_name}' removed successfully.", {
                            "Content-Type": CONTENT_TYPE_TEXT})
 
-    def onRequest(self, flow: IFlow) -> bool:
+    def on_request(self, flow: IFlow) -> bool:
         host = flow.get_host()
         normalized_host = host[len("www."):] if host.startswith(
             "www.") else host
