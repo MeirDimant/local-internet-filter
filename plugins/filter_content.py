@@ -32,24 +32,24 @@ class FilterContent(PluginBase):
     def title(self) -> str:
         return "Filter Content"
 
-    def handle_request(self, method: str, flow: Any):
+    def _handle_request(self, method: str, flow: Any):
         """Handle HTTP requests based on the method type."""
         if method == "GET":
-            self.handle_get(flow)
+            self._handle_get(flow)
         elif method == "POST":
-            self.handle_post(flow)
+            self._handle_post(flow)
         elif method == "PUT":
             self.handle_put(flow)
         elif method == "DELETE":
-            self.handle_delete(flow)
+            self._handle_delete(flow)
 
-    def handle_get(self, flow: Any):
+    def _handle_get(self, flow: Any):
         """Return list of all the domains with their allowed content types."""
         response_content = json.dumps(self.contents)
         flow.make_response(HTTP_OK, response_content, {
                            "Content-Type": CONTENT_TYPE_JSON})
 
-    def handle_post(self, flow: Any):
+    def _handle_post(self, flow: Any):
         """Add allowed content type to one of the approved domains."""
         try:
             content_data = json.loads(flow.get_request().content.decode())
@@ -87,7 +87,7 @@ class FilterContent(PluginBase):
             flow.make_response(HTTP_BAD_REQUEST, "Something went wrong while updating the content-types list", {
                                "Content-Type": CONTENT_TYPE_TEXT})
 
-    def handle_delete(self, flow: Any):
+    def _handle_delete(self, flow: Any):
         """Delete one content type from the allowed content types list."""
         try:
             content_data = json.loads(flow.get_request().content.decode())
@@ -125,7 +125,7 @@ class FilterContent(PluginBase):
         if normalized_host == "settings.it":
             req = flow.get_request()
             if req.path.endswith("/api/contents"):
-                self.handle_request(req.method, flow)
+                self._handle_request(req.method, flow)
 
             return True
 

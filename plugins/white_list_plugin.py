@@ -24,22 +24,22 @@ class WhiteListPlugin(PluginBase):
     def title(self) -> str:
         return "White List"
 
-    def handle_request(self, method: str, flow: IFlow):
+    def _handle_request(self, method: str, flow: IFlow):
         """Handle HTTP requests based on the method type."""
         if method == "GET":
-            self.handle_get(flow)
+            self._handle_get(flow)
         elif method == "POST":
-            self.handle_post(flow)
+            self._handle_post(flow)
         elif method == "DELETE":
-            self.handle_delete(flow)
+            self._handle_delete(flow)
 
-    def handle_get(self, flow):
+    def _handle_get(self, flow):
         """Handles GET requests. Pass to the user the approved domain list"""
         response_content = json.dumps(self.approved_domains)
         flow.make_response(HTTP_OK, response_content, {
                            "Content-Type": CONTENT_TYPE_JSON})
 
-    def handle_post(self, flow):
+    def _handle_post(self, flow):
         """
         Handles POST requests.
         Adding a new approved domain to the list
@@ -63,7 +63,7 @@ class WhiteListPlugin(PluginBase):
         flow.make_response(HTTP_OK, "Domain added successfully", {
                            "Content-Type": CONTENT_TYPE_TEXT})
 
-    def handle_delete(self, flow):
+    def _handle_delete(self, flow):
         """
         Handles DELETE requests.
         Deletes from the list the approved domain sent by the user 
@@ -90,7 +90,7 @@ class WhiteListPlugin(PluginBase):
         if normalized_host == "settings.it":
             req = flow.get_request()
             if req.path.endswith("/api/approved-domains"):
-                self.handle_request(req.method, flow)
+                self._handle_request(req.method, flow)
 
             return True
 

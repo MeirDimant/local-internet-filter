@@ -31,7 +31,7 @@ class TestSettingsPlugin(unittest.TestCase):
         with patch('os.path.exists', return_value=True), \
                 patch('builtins.open', unittest.mock.mock_open(read_data='data')), \
                 patch('os.path.join', return_value="path/to/an/existing/file"):
-            self.plugin.serve_files(self.mock_flow, 'index.html')
+            self.plugin._serve_files(self.mock_flow, 'index.html')
             # Check response was made with correct status and content-type
             self.mock_flow.make_response.assert_called_once_with(
                 200, 'data', {'Content-Type': 'text/html'})
@@ -40,7 +40,7 @@ class TestSettingsPlugin(unittest.TestCase):
         # Setup non-existing file scenario
         self.mock_flow.make_response.reset_mock()
         with patch('os.path.exists', return_value=False):
-            self.plugin.serve_files(self.mock_flow, 'nonexistent.html')
+            self.plugin._serve_files(self.mock_flow, 'nonexistent.html')
             self.mock_flow.make_response.assert_called_once_with(
                 404, b"File not found!", {"Content-Type": "text/plain"})
 

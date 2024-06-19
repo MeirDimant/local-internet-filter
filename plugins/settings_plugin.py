@@ -25,7 +25,7 @@ class SettingsPlugin(PluginBase):
     def title(self):
         return 'Settings'
 
-    def serve_files(self, flow: IFlow, path: str):
+    def _serve_files(self, flow: IFlow, path: str):
         """Serve static files"""
 
         # Determine the root directory for static files
@@ -55,6 +55,6 @@ class SettingsPlugin(PluginBase):
         # If the user trys to reach "setting.it" the plugin will return the static files of the UI
         if host == "settings.it":
             if path == "/" or is_static_file(path):
-                self.serve_files(flow, path.lstrip("/") or "index.html")
+                self._serve_files(flow, path.lstrip("/") or "index.html")
 
         return True

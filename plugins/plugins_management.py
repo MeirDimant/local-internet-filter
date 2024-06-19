@@ -119,24 +119,24 @@ class PluginsManagement(PluginBase):
 
         self.fetch_plugins_list()
 
-    def handle_request(self, method: str, flow: IFlow):
+    def _handle_request(self, method: str, flow: IFlow):
         if method == "GET":
-            self.handle_get(flow)
+            self._handle_get(flow)
         elif method == "POST":
-            self.handle_post(flow)
+            self._handle_post(flow)
         elif method == "PUT":
-            self.handle_put(flow)
+            self._handle_put(flow)
         elif method == "DELETE":
-            self.handle_delete(flow)
+            self._handle_delete(flow)
 
-    def handle_get(self, flow):
+    def _handle_get(self, flow):
         """Handles GET requests."""
         # returns to the user the plugins lists
         response_content = json.dumps(self.plugins_list)
         flow.make_response(HTTP_OK, response_content, {
                            "Content-Type": CONTENT_TYPE_JSON})
 
-    def handle_post(self, flow):
+    def _handle_post(self, flow):
         """Handles POST requests with file upload.
         Adding new plugins."""
         # Decode the raw content of the request and extract the filename and its content using a regex pattern
@@ -179,7 +179,7 @@ class PluginsManagement(PluginBase):
             flow.make_response(HTTP_BAD_REQUEST, "Invalid file", {
                 "Content-Type": CONTENT_TYPE_TEXT})
 
-    def handle_put(self, flow):
+    def _handle_put(self, flow):
         """Handles PUT requests.
         Updating the plugins lists"""
         new_plugins_list = json.loads(
@@ -196,7 +196,7 @@ class PluginsManagement(PluginBase):
         flow.make_response(HTTP_OK, "Plugins list updated successfully", {
                            "Content-Type": CONTENT_TYPE_TEXT})
 
-    def handle_delete(self, flow):
+    def _handle_delete(self, flow):
         """Handles DELETE requests to remove a plugin."""
         request_data = json.loads(flow.get_request().content.decode())
         plugin_name = request_data.get('plugin_name')
@@ -237,6 +237,6 @@ class PluginsManagement(PluginBase):
         if normalized_host == "settings.it":
             req = flow.get_request()
             if req.path.endswith("/api/plugins"):
-                self.handle_request(req.method, flow)
+                self._handle_request(req.method, flow)
 
             return True

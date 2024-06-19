@@ -26,11 +26,11 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_request.return_value.path = "/api/approved-domains"
 
         # Mocking handle_request to chek if called
-        self.plugin.handle_request = Mock()
+        self.plugin._handle_request = Mock()
 
         result = self.plugin.on_request(self.mock_flow)
 
-        self.plugin.handle_request.assert_called_once()
+        self.plugin._handle_request.assert_called_once()
         self.assertTrue(
             result, "onRequest should return True when host and path are correct")
 
@@ -38,11 +38,11 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_host.return_value = "www.settings.it"
         self.mock_flow.get_request.return_value.path = "/not/interesting/path"
 
-        self.plugin.handle_request = Mock()
+        self.plugin._handle_request = Mock()
 
         result = self.plugin.on_request(self.mock_flow)
 
-        self.plugin.handle_request.assert_not_called()
+        self.plugin._handle_request.assert_not_called()
         self.assertTrue(
             result, "onRequest should still return True for handled host regardless of path")
 
@@ -58,7 +58,7 @@ class TestWhiteListPlugin(unittest.TestCase):
 
     ### test for handle_get method ###
     def test_handle_get(self):
-        self.plugin.handle_get(self.mock_flow)
+        self.plugin._handle_get(self.mock_flow)
         response_content = json.dumps(self.plugin.approved_domains)
 
         self.mock_flow.make_response.assert_called_once_with(
@@ -70,7 +70,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_request.return_value.content.decode.return_value = json.dumps({
         })
 
-        self.plugin.handle_post(self.mock_flow)
+        self.plugin._handle_post(self.mock_flow)
 
         self.mock_flow.make_response.assert_called_once_with(
             HTTP_BAD_REQUEST, "Bad Request: Missing domain", {
@@ -81,7 +81,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_request.return_value.content.decode.return_value = json.dumps({
                                                                                          "domain": "example.com"})
 
-        self.plugin.handle_post(self.mock_flow)
+        self.plugin._handle_post(self.mock_flow)
 
         self.mock_flow.make_response.assert_called_once_with(
             HTTP_BAD_REQUEST, "Domain already exists", {
@@ -95,7 +95,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.plugin.db.fetch_all.return_value = [
             {"domain": d} for d in self.plugin.approved_domains + [new_domain]]
 
-        self.plugin.handle_post(self.mock_flow)
+        self.plugin._handle_post(self.mock_flow)
 
         self.plugin.db.insert.assert_called_once_with(
             'approved_domains', {'domain': new_domain})
@@ -113,7 +113,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.plugin.db.fetch_all.return_value = [
             {"domain": d} for d in ["test.com"]]
 
-        self.plugin.handle_delete(self.mock_flow)
+        self.plugin._handle_delete(self.mock_flow)
 
         self.plugin.db.remove.assert_called_once_with(
             'approved_domains', 'domain', domain_to_remove)
@@ -129,7 +129,7 @@ class TestWhiteListPlugin(unittest.TestCase):
         self.mock_flow.get_request.return_value.content.decode.return_value = json.dumps(
             {"domain": domain_to_remove})
 
-        self.plugin.handle_delete(self.mock_flow)
+        self.plugin._handle_delete(self.mock_flow)
 
         self.plugin.db.remove.assert_not_called()
         self.mock_flow.make_response.assert_called_once_with(
