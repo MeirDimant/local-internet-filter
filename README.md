@@ -1,74 +1,79 @@
-# Project Setup Instructions
+# SafeBrowse
 
-## Prerequisites
+<img src="imgs/logo.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 300px;">
+<br>
 
-Before installing mitmproxy, ensure you have Python 3.8 or newer installed on your system. This is required to ensure full compatibility with mitmproxy.
+SafeBrowse is a local content filtering system for the internet, developed as a plugin-based addon for mitmproxy. It provides organizations with control over available internet content without relying on third-party services.
 
-You can verify your Python version by running:
+## Table of Contents
 
-```bash
-python --version
-```
+1. [Project Overview](#project-overview)
+2. [Key Features](#key-features)
+3. [System Architecture](#system-architecture)
+4. [Installation](#installation)
+5. [Usage](#usage)
 
-If you do not have Python installed, or if your Python version is below 3.8, please install the latest Python version from the [official Python website](https://www.python.org/downloads/).
+## Project Overview
 
-## Additional Requirements
+SafeBrowse offers a unique approach to the challenge of internet content filtering by creating a local, plugin-supported system built on Python and mitmproxy. The system allows users to customize the filtering process to their specific needs and is designed for large organizations that want control over approved content without compromising information security by routing transactions through third parties.
 
-### Install mitmproxy
+## Key Features
 
-To install mitmproxy, run the following command:
+- Plugin-based architecture for easy extensibility
+- Local content filtering without relying on third-party services
+- Customizable filtering rules
+- User-friendly React-based management interface
+- Support for adding and removing plugins through the UI
+
+## System Architecture
+
+### Plugin Structure
+
+![Plugin Structure](imgs/plugin-stracture.png)
+
+### User Interface Components (React)
+
+![UI Components](imgs/react.jpg)
+
+### Data Structure (TinyDB style)
+
+![Data Structure](imgs/database.png)
+
+## Installation
+
+1. Install Firefox browser.
+2. Install mitmproxy:
 
 ```bash
 pip install mitmproxy
 ```
 
-This will install the latest version of mitmproxy.
+3. Configure Firefox to use mitmproxy:
 
-### Install Firefox
+   - Open Firefox settings
+   - Go to Network Settings
+   - Select 'Manual proxy configuration'
+   - Set HTTP Proxy to 'localhost' and Port to '8080'
+   - Check 'Also use this proxy for HTTPS'
 
-Ensure you have Mozilla Firefox installed on your system. If Firefox is not installed, download and install it from the [official Firefox website](https://www.mozilla.org/firefox/new/).
+4. Install mitmproxy CA Certificate in Firefox:
 
-### Configure Firefox to Use mitmproxy
+   - Run mitmweb in the command line
+   - Open http://mitm.it in Firefox
+   - Download and install the certificate for Firefox
 
-To make Firefox use mitmproxy for web traffic, follow these steps:
+5. Set up the mitmproxy run script:
 
-1.  Open Firefox and go to the Preferences menu.
-2.  Scroll to the Network Settings section and click on `Settings...`.
-3.  In the Connection Settings dialog, select the option `Manual proxy configuration`.
-4.  Set the HTTP Proxy to `localhost` and the Port to `8080` (or whatever port you configured mitmproxy to listen on).
-5.  Check the option `Also use this proxy for HTTPS`.
-6.  Click OK to save the settings.
+   - Create a file named script-test.sh in the project root
+   - Add the following line:
 
-Now, when you browse with Firefox, all web traffic will pass through mitmproxy.
+   ```bash
+   mitmweb.exe -s <directory>/runner.py --no-web-open-browser --mode regular@8080
+   ```
 
-### Install mitmproxy CA Certificate in Firefox
+   - Replace \<directory> with the path to the runner.py file.
 
-To allow mitmproxy to intercept HTTPS traffic, Firefox must trust the mitmproxy Certificate Authority (CA). You can install the CA certificate by following these steps:
+## Usage
 
-1.  **Run mitmproxy:** Start the mitmproxy tool on your computer. You can do this by typing `mitmproxy`, `mitmdump`, or `mitmweb` in your command line or terminal.
-2.  **Access the mitmproxy's web interface:** Open a web browser and navigate to [http://mitm.it](http://mitm.it). This page is served directly by mitmproxy and provides links to download the certificate for various operating systems and browsers.
-3.  **Download the Certificate:** Click on the appropriate link to download the mitmproxy certificate for Firefox. The file usually ends with a `.pem` or `.crt` extension.
-4.  **Install the Certificate in Firefox:**
-    - Open Firefox.
-    - Go to settings by clicking the menu button and selecting "settings".
-    - Scroll down to "Privacy & Security" and go to the "Certificates" section.
-    - Click on "View Certificates" to open the Certificate Manager.
-    - In the Certificate Manager, go to the "Authorities" tab.
-    - Click "Import" and select the downloaded certificate file.
-    - Confirm that you want to trust this certificate for identifying websites.
-5.  **Restart Firefox:** Close and reopen Firefox to ensure that the changes take effect.
-
-## Setup Script
-
-1.  Create a new shell script file named `script-test.sh` in your preferred directory.
-2.  Open the `script-test.sh` file with a text editor of your choice and add the following line:
-
-```bash
-mitmweb.exe -s <directory>/runner.py --no-web-open-browser --mode regular@8080
-```
-
-**Note:** Replace `<directory>` with the actual path to the root directory where the `runner.py` file is located.
-
-3.  Save the file and close the editor.
-
-This script configures mitmweb to run without opening a browser and sets it to regular mode on port 8080.
+1. Run the system using the debugger in VS Code.
+2. To access the system management page, enter "settings.it" in the address bar (first-time users need to register).
