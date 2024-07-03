@@ -1,6 +1,6 @@
 # SafeBrowse
 
-<img src="imgs/logo.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 300px;">
+<img src="imgs/logo.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 100px;">
 <br>
 
 SafeBrowse is a local content filtering system for the internet, developed as a plugin-based addon for mitmproxy. It provides organizations with control over available internet content without relying on third-party services.
